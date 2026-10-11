@@ -1895,15 +1895,28 @@ async function scanSolvedProblemFallback(csrfToken) {
   const solvedResponse = await fetch('https://leetcode.com/api/problems/all/', { credentials: 'include', headers });
   if (!solvedResponse.ok) throw new Error('LeetCode did not allow access to your solved-problem list.');
   const solvedPairs = (await solvedResponse.json()).stat_status_pairs?.filter(item => item.status === 'ac') || [];
-  const query = 'query submissions($offset: Int!, $limit: Int!, $lastKey: String, $questionSlug: String!) { submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug) { submissions { id statusDisplay lang timestamp } } }';
+  const query = 'query submissions($offset: Int!, $limit: Int!, $lastKey: String, $questionSlug: String!) { submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug) { hasNext submissions { id statusDisplay lang timestamp } } }';
   const output = [];
   for (const pair of solvedPairs) {
     const slug = pair.stat?.question__title_slug;
     if (!slug) continue;
-    const response = await fetch('https://leetcode.com/graphql/', { method: 'POST', credentials: 'include', headers, body: JSON.stringify({ operationName: 'submissions', variables: { offset: 0, limit: 20, lastKey: null, questionSlug: slug }, query }) });
-    const rows = (await response.json().catch(() => ({})))?.data?.submissionList?.submissions || [];
-    const accepted = rows.find(item => item.statusDisplay === 'Accepted');
+    let accepted;
+    for (let offset = 0; offset < 200 && !accepted; offset += 20) {
+      let page;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const response = await fetch('https://leetcode.com/graphql/', { method: 'POST', credentials: 'include', headers, body: JSON.stringify({ operationName: 'submissions', variables: { offset, limit: 20, lastKey: null, questionSlug: slug }, query }) });
+        const payload = await response.json().catch(() => ({}));
+        page = payload?.data?.submissionList;
+        if (response.ok && page?.submissions?.length) break;
+        await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+      }
+      const rows = page?.submissions || [];
+      accepted = rows.find(item => item.statusDisplay === 'Accepted');
+      if (!page?.hasNext || !rows.length) break;
+    }
     if (accepted) output.push({ id: accepted.id, title: pair.stat.question__title, titleSlug: slug, timestamp: accepted.timestamp, lang: accepted.lang });
+    // Keep the read-only scan below LeetCode's request burst threshold.
+    await new Promise(resolve => setTimeout(resolve, 125));
   }
   return output;
 }
