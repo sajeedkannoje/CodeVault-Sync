@@ -76,23 +76,25 @@ $('import-history').onclick = async () => {
     if (!ids.length) { $('import-help').textContent = 'Select at least one submission to import.'; return; }
     $('import-selected').disabled = true; $('import-all').disabled = true;
     await chrome.storage.local.set({ history_import_progress: { completed: 0, total: ids.length, failed: 0, state: 'running' } });
-    $('import-help').textContent = `Importing ${ids.length} solutions one at a time. Progress is saved, and temporary GitHub failures are retried automatically.`;
+    $('import-help').textContent = `Importing ${ids.length} solutions at a safe pace. Progress is saved, and temporary GitHub or LeetCode limits are retried automatically.`;
     const allResults = [];
     for (let offset = 0; offset < ids.length; offset++) {
       let imported;
       let lastError = '';
-      for (let attempt = 0; attempt < 3; attempt++) {
+      for (let attempt = 0; attempt < 4; attempt++) {
         imported = await chrome.runtime.sendMessage({ type: 'IMPORT_LEETCODE_HISTORY', submissionIds: [ids[offset]], progressOffset: offset, total: ids.length }).catch(error => ({ ok: false, error: error.message }));
         if (imported?.ok) break;
         lastError = imported?.error || 'Temporary import failure.';
-        $('import-help').textContent = `Retrying ${offset + 1} of ${ids.length}… (${attempt + 1}/3)`;
-        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+        $('import-help').textContent = `Retrying ${offset + 1} of ${ids.length}… (${attempt + 1}/4)`;
+        await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1)));
       }
       if (imported?.ok) allResults.push(...(imported.results || []));
       else allResults.push({ ok: false, id: ids[offset], error: lastError || 'Import failed after retries.' });
       const failedSoFar = allResults.filter(item => !item.ok).length;
       await chrome.storage.local.set({ history_import_progress: { completed: offset + 1, total: ids.length, failed: failedSoFar, state: 'running' } });
       $('import-help').textContent = `Importing ${offset + 1} of ${ids.length}${failedSoFar ? ` · ${failedSoFar} need attention` : ''}`;
+      // Avoid GitHub secondary rate limits and let LeetCode's session endpoints settle.
+      await new Promise(resolve => setTimeout(resolve, 1500));
     }
     const failed = allResults.filter(item => !item.ok).length;
     await chrome.storage.local.set({ history_import_progress: { completed: allResults.length, total: ids.length, failed, state: 'done' } });
