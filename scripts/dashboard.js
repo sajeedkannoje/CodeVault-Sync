@@ -86,15 +86,18 @@ $('import-history').onclick = async () => {
         if (imported?.ok) break;
         lastError = imported?.error || 'Temporary import failure.';
         $('import-help').textContent = `Retrying ${offset + 1} of ${ids.length}… (${attempt + 1}/4)`;
-        await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1)));
+        // Historical imports create blobs, a tree, a commit, and a ref update.
+        // Give GitHub enough time to clear secondary write-rate limits.
+        await new Promise(resolve => setTimeout(resolve, 10000 * (attempt + 1)));
       }
       if (imported?.ok) allResults.push(...(imported.results || []));
       else allResults.push({ ok: false, id: ids[offset], error: lastError || 'Import failed after retries.' });
       const failedSoFar = allResults.filter(item => !item.ok).length;
       await chrome.storage.local.set({ history_import_progress: { completed: offset + 1, total: ids.length, failed: failedSoFar, state: 'running' } });
       $('import-help').textContent = `Importing ${offset + 1} of ${ids.length}${failedSoFar ? ` · ${failedSoFar} need attention` : ''}`;
-      // Avoid GitHub secondary rate limits and let LeetCode's session endpoints settle.
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Backdated commits are intentionally paced: each one has several GitHub
+      // write requests and needs room before the next dated commit starts.
+      await new Promise(resolve => setTimeout(resolve, 8000));
     }
     const failed = allResults.filter(item => !item.ok).length;
     await chrome.storage.local.set({ history_import_progress: { completed: allResults.length, total: ids.length, failed, state: 'done' } });
