@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1320" viewBox="0 0 1100 1320" role="img" aria-labelledby="title desc">
+<title id="title">LeetCode Two Sum — Minimal Elegant</title><desc id="desc">Individual LeetCode solution README design showing accepted submission metadata, problem, examples, code, complexity and notes.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f1e6"/><stop offset="1" stop-color="#fffaf1"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#356fbb"/><stop offset="1" stop-color="#8a59c9"/></linearGradient><style>text{font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;} .h1{font-size:31px;font-weight:760;fill:#25221d;letter-spacing:-.6px} .sub{font-size:13px;fill:#827667} .section{font-size:16px;font-weight:750;fill:#25221d} .label{font-size:11px;fill:#827667} .value{font-size:16px;font-weight:750;fill:#25221d} .body{font-size:13px;fill:#25221d} .small{font-size:11px;fill:#827667} .code{font-size:12px;fill:#25221d;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}</style></defs>
+<rect width="1100" height="1320" rx="24" fill="url(#bg)"/>
+
+
+<rect x="24" y="22" width="1052" height="1276" rx="20" fill="#fffaf1" stroke="#e8ddca"/>
+<rect x="24" y="22" width="1052" height="6" rx="3" fill="url(#accent)"/>
+<text x="56" y="58" font-size="11" font-weight="750" letter-spacing="1.7" fill="#827667">LEETCODE · SOLUTION JOURNAL</text>
+<text x="56" y="103" class="h1">1. Two Sum</text>
+<text x="56" y="130" class="sub">Find two indices whose values add up to the target.</text>
+<rect x="56" y="148" width="58" height="26" rx="13" fill="#15966c" opacity=".15"/><text x="85" y="165" text-anchor="middle" font-size="11" font-weight="700" fill="#15966c">Easy</text>
+<rect x="122" y="148" width="73" height="26" rx="13" fill="#356fbb" opacity=".15"/><text x="158" y="165" text-anchor="middle" font-size="11" font-weight="700" fill="#356fbb">Array</text>
+<rect x="203" y="148" width="105" height="26" rx="13" fill="#8a59c9" opacity=".15"/><text x="255" y="165" text-anchor="middle" font-size="11" font-weight="700" fill="#8a59c9">Hash Table</text>
+<rect x="918" y="62" width="122" height="34" rx="17" fill="#15966c" opacity=".16"/><text x="979" y="83" text-anchor="middle" font-size="12" font-weight="750" fill="#15966c">✓ Accepted</text>
+<path d="M56 194H1044" stroke="#e8ddca"/>
+<rect x="56.0" y="215" width="238.0" height="92" rx="13" fill="#fffdf8" stroke="#e8ddca" />
+<rect x="70.0" y="230" width="27" height="27" rx="8" fill="#356fbb" opacity=".17"/>
+<circle cx="83.5" cy="243.5" r="5" fill="#356fbb"/>
+<text x="108.0" y="243" class="label">RUNTIME</text>
+<text x="70.0" y="276" class="value">4 ms</text>
+<text x="70.0" y="294" class="small">40.79% percentile</text>
+<rect x="306.0" y="215" width="238.0" height="92" rx="13" fill="#fffdf8" stroke="#e8ddca" />
+<rect x="320.0" y="230" width="27" height="27" rx="8" fill="#8a59c9" opacity=".17"/>
+<circle cx="333.5" cy="243.5" r="5" fill="#8a59c9"/>
+<text x="358.0" y="243" class="label">MEMORY</text>
+<text x="320.0" y="276" class="value">20.4 MB</text>
+<text x="320.0" y="294" class="small">42.52% percentile</text>
+<rect x="556.0" y="215" width="238.0" height="92" rx="13" fill="#fffdf8" stroke="#e8ddca" />
+<rect x="570.0" y="230" width="27" height="27" rx="8" fill="#d98b2b" opacity=".17"/>
+<circle cx="583.5" cy="243.5" r="5" fill="#d98b2b"/>
+<text x="608.0" y="243" class="label">LANGUAGE</text>
+<text x="570.0" y="276" class="value">Python3</text>
+<rect x="806.0" y="215" width="238.0" height="92" rx="13" fill="#fffdf8" stroke="#e8ddca" />
+<rect x="820.0" y="230" width="27" height="27" rx="8" fill="#15966c" opacity=".17"/>
+<circle cx="833.5" cy="243.5" r="5" fill="#15966c"/>
+<text x="858.0" y="243" class="label">SUBMITTED</text>
+<text x="820.0" y="276" class="value">10/11/2026</text>
+<text x="820.0" y="294" class="small">6:24:55 PM</text>
+<text x="56" y="338" class="section">▤  Problem statement</text>
+<text x="544" y="338" class="section">⌘  Solution</text>
+<text x="56" y="367" class="body">Given an integer array nums and an integer target,</text>
+<text x="56" y="388" class="body">return the indices of two numbers that add up to target.</text>
+<text x="56" y="418" class="label">EXAMPLE 1</text>
+<rect x="56" y="433" width="470" height="104" rx="12" fill="#fffdf8" stroke="#e8ddca"/>
+<text x="73" y="459" class="body">Input: nums = [2, 7, 11, 15], target = 9</text>
+<text x="73" y="483" font-size="13" font-weight="700" fill="#15966c">Output: [0, 1]</text>
+<text x="73" y="509" class="small">nums[0] + nums[1] = 9</text>
+<text x="56" y="569" class="label">EXAMPLE 2</text>
+<rect x="56" y="584" width="470" height="80" rx="12" fill="#fffdf8" stroke="#e8ddca"/>
+<text x="73" y="612" class="body">Input: nums = [3, 2, 4], target = 6</text>
+<text x="73" y="638" font-size="13" font-weight="700" fill="#15966c">Output: [1, 2]</text>
+<rect x="544" y="354" width="500" height="310" rx="13" fill="#f7f1e6" stroke="#e8ddca"/>
+<rect x="544" y="354" width="500" height="35" rx="13" fill="#fffdf8"/>
+<text x="560" y="376" class="small">Python3 · solution.py</text>
+<text x="562" y="416" class="code" fill="#356fbb">class Solution:</text>
+<text x="562" y="445" class="code" fill="#8a59c9">    def twoSum(self, nums, target):</text>
+<text x="562" y="474" class="code" fill="#25221d">        seen = {}</text>
+<text x="562" y="503" class="code" fill="#25221d">        for i, value in enumerate(nums):</text>
+<text x="562" y="532" class="code" fill="#d98b2b">            complement = target - value</text>
+<text x="562" y="561" class="code" fill="#25221d">            if complement in seen:</text>
+<text x="562" y="590" class="code" fill="#15966c">                return [seen[complement], i]</text>
+<text x="562" y="619" class="code" fill="#25221d">            seen[value] = i</text>
+<text x="56" y="704" class="section">◷  Complexity</text>
+<rect x="56" y="721" width="470" height="116" rx="13" fill="#fffdf8" stroke="#e8ddca"/>
+<text x="76" y="751" class="label">TIME COMPLEXITY</text>
+<text x="76" y="779" class="value">O(n)</text>
+<text x="306" y="751" class="label">SPACE COMPLEXITY</text>
+<text x="306" y="779" class="value">O(n)</text>
+<text x="76" y="809" class="small">One pass + hash map lookup</text>
+<text x="544" y="704" class="section">✎  Notes</text>
+<rect x="544" y="721" width="500" height="116" rx="13" fill="#fffdf8" stroke="#e8ddca"/>
+<text x="562" y="752" class="body">• Store each value with its index.</text>
+<text x="562" y="777" class="body">• Check the complement before inserting.</text>
+<text x="562" y="802" class="body">• Handles duplicate values such as [3, 3].</text>
+<text x="56" y="886" class="section">Submission details</text>
+<rect x="56" y="904" width="988" height="98" rx="13" fill="#fffdf8" stroke="#e8ddca"/>
+<text x="74" y="932" class="label">STATUS</text><text x="74" y="959" font-size="13" font-weight="700" fill="#15966c">Accepted</text>
+<text x="306" y="932" class="label">LANGUAGE</text><text x="306" y="959" class="body">Python3</text>
+<text x="556" y="932" class="label">RUNTIME PERCENTILE</text><text x="556" y="959" class="body">40.79%</text>
+<text x="806" y="932" class="label">MEMORY PERCENTILE</text><text x="806" y="959" class="body">42.52%</text>
+<path d="M56 1032H1044" stroke="#e8ddca"/>
+<text x="56" y="1060" class="small">LEETCODE / 1 · TWO SUM</text>
+<text x="1044" y="1060" text-anchor="end" class="small">Generated from submission metadata</text>
+<text x="56" y="1114" class="section">Why this works</text>
+<text x="56" y="1142" class="body">For each number, the hash map answers whether its complement has already appeared.</text>
+<text x="56" y="1165" class="body">Each lookup and insertion is O(1) on average, so the full scan is O(n).</text>
+<rect x="56" y="1200" width="988" height="54" rx="12" fill="#356fbb" opacity=".10"/>
+<text x="74" y="1232" font-size="12" font-weight="700" fill="#356fbb">PATTERN TO REMEMBER</text>
+<text x="276" y="1232" class="body">Hash Map · Complement = target − current value</text>
+</svg>

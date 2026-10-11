@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+<title id="title">Modern Dark Dashboard</title><desc id="desc">LeetCode submission dashboard concept for a GitHub README.</desc>
+
+    <defs>
+      <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1118"/><stop offset="1" stop-color="#131f2b"/></linearGradient>
+      <linearGradient id="heroGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38a5ff" stop-opacity=".22"/><stop offset="1" stop-color="#a879ff" stop-opacity=".07"/></linearGradient>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity=".22"/></filter>
+      <style>
+        text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; }
+        .h1 { font-size: 31px; font-weight: 750; fill: #edf4fb; letter-spacing: -.8px; }
+        .sub { font-size: 13px; fill: #9aaabd; }
+        .section { font-size: 17px; font-weight: 700; fill: #edf4fb; }
+        .label { font-size: 11px; fill: #9aaabd; }
+        .value { font-size: 21px; font-weight: 750; fill: #edf4fb; }
+        .topic { font-size: 12px; font-weight: 650; fill: #edf4fb; }
+        .small { font-size: 11px; fill: #9aaabd; }
+        .line { stroke: #263746; stroke-width: 1; }
+      </style>
+    </defs>
+<rect width="1200" height="900" rx="24" fill="url(#bgGrad)"/>
+<rect x="42" y="30" width="52" height="48" rx="13" fill="#38a5ff" opacity=".14"/>
+<text x="53" y="61" font-size="27" font-weight="800" fill="#38a5ff">‹›</text>
+<text x="110" y="59" class="h1">leetcode</text>
+<text x="110" y="82" class="sub">A collection of LeetCode questions to ace the coding interview</text>
+<rect x="1018" y="34" width="140" height="34" rx="9" fill="#101923" stroke="#263746"/>
+<text x="1036" y="55" class="small">⚡ CodeVault Sync</text>
+<rect x="42.0" y="116" width="268.5" height="94" rx="14" fill="#101923" stroke="#263746" filter="url(#shadow)"/>
+<rect x="58.0" y="133" width="34" height="34" rx="10" fill="#38a5ff" opacity=".16"/>
+<circle cx="75.0" cy="150" r="7" fill="#38a5ff"/>
+<text x="104.0" y="147" class="label">TOTAL PROBLEMS</text>
+<text x="104.0" y="176" class="value">124</text>
+<rect x="324.5" y="116" width="268.5" height="94" rx="14" fill="#101923" stroke="#263746" filter="url(#shadow)"/>
+<rect x="340.5" y="133" width="34" height="34" rx="10" fill="#37d6a0" opacity=".16"/>
+<circle cx="357.5" cy="150" r="7" fill="#37d6a0"/>
+<text x="386.5" y="147" class="label">SOLVED</text>
+<text x="386.5" y="176" class="value">98</text>
+<rect x="607.0" y="116" width="268.5" height="94" rx="14" fill="#101923" stroke="#263746" filter="url(#shadow)"/>
+<rect x="623.0" y="133" width="34" height="34" rx="10" fill="#a879ff" opacity=".16"/>
+<circle cx="640.0" cy="150" r="7" fill="#a879ff"/>
+<text x="669.0" y="147" class="label">ACCEPTANCE RATE</text>
+<text x="669.0" y="176" class="value">78.3%</text>
+<rect x="889.5" y="116" width="268.5" height="94" rx="14" fill="#101923" stroke="#263746" filter="url(#shadow)"/>
+<rect x="905.5" y="133" width="34" height="34" rx="10" fill="#ffb34d" opacity=".16"/>
+<circle cx="922.5" cy="150" r="7" fill="#ffb34d"/>
+<text x="951.5" y="147" class="label">CURRENT STREAK</text>
+<text x="951.5" y="176" class="value">12 days</text>
+<text x="42" y="238" class="section">▦  Topics</text>
+<text x="1088" y="238" class="small">View all →</text>
+<rect x="42.0" y="258" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="56.0" y="275" width="30" height="30" rx="9" fill="#38a5ff" opacity=".17"/>
+<path d="M65.0 290h12m-6 -6v12" stroke="#38a5ff" stroke-width="2.5" stroke-linecap="round"/>
+<text x="97.0" y="288" class="topic">Array</text>
+<text x="97.0" y="307" class="small">32/40 solved</text>
+<rect x="56.0" y="326" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="56.0" y="326" width="193.6" height="5" rx="3" fill="#38a5ff"/>
+<rect x="324.0" y="258" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="338.0" y="275" width="30" height="30" rx="9" fill="#37d6a0" opacity=".17"/>
+<path d="M347.0 290h12m-6 -6v12" stroke="#37d6a0" stroke-width="2.5" stroke-linecap="round"/>
+<text x="379.0" y="288" class="topic">Hash Map</text>
+<text x="379.0" y="307" class="small">18/25 solved</text>
+<rect x="338.0" y="326" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="338.0" y="326" width="174.2" height="5" rx="3" fill="#37d6a0"/>
+<rect x="606.0" y="258" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="620.0" y="275" width="30" height="30" rx="9" fill="#ffb34d" opacity=".17"/>
+<path d="M629.0 290h12m-6 -6v12" stroke="#ffb34d" stroke-width="2.5" stroke-linecap="round"/>
+<text x="661.0" y="288" class="topic">Two Pointers</text>
+<text x="661.0" y="307" class="small">14/20 solved</text>
+<rect x="620.0" y="326" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="620.0" y="326" width="169.4" height="5" rx="3" fill="#ffb34d"/>
+<rect x="888.0" y="258" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="902.0" y="275" width="30" height="30" rx="9" fill="#a879ff" opacity=".17"/>
+<path d="M911.0 290h12m-6 -6v12" stroke="#a879ff" stroke-width="2.5" stroke-linecap="round"/>
+<text x="943.0" y="288" class="topic">Binary Search</text>
+<text x="943.0" y="307" class="small">10/15 solved</text>
+<rect x="902.0" y="326" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="902.0" y="326" width="162.1" height="5" rx="3" fill="#a879ff"/>
+<rect x="42.0" y="362" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="56.0" y="379" width="30" height="30" rx="9" fill="#f05b91" opacity=".17"/>
+<path d="M65.0 394h12m-6 -6v12" stroke="#f05b91" stroke-width="2.5" stroke-linecap="round"/>
+<text x="97.0" y="392" class="topic">Linked List</text>
+<text x="97.0" y="411" class="small">12/20 solved</text>
+<rect x="56.0" y="430" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="56.0" y="430" width="145.2" height="5" rx="3" fill="#f05b91"/>
+<rect x="324.0" y="362" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="338.0" y="379" width="30" height="30" rx="9" fill="#24c7d9" opacity=".17"/>
+<path d="M347.0 394h12m-6 -6v12" stroke="#24c7d9" stroke-width="2.5" stroke-linecap="round"/>
+<text x="379.0" y="392" class="topic">Stack</text>
+<text x="379.0" y="411" class="small">8/12 solved</text>
+<rect x="338.0" y="430" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="338.0" y="430" width="162.1" height="5" rx="3" fill="#24c7d9"/>
+<rect x="606.0" y="362" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="620.0" y="379" width="30" height="30" rx="9" fill="#45d99a" opacity=".17"/>
+<path d="M629.0 394h12m-6 -6v12" stroke="#45d99a" stroke-width="2.5" stroke-linecap="round"/>
+<text x="661.0" y="392" class="topic">Tree</text>
+<text x="661.0" y="411" class="small">14/25 solved</text>
+<rect x="620.0" y="430" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="620.0" y="430" width="135.5" height="5" rx="3" fill="#45d99a"/>
+<rect x="888.0" y="362" width="270.0" height="92" rx="12" fill="#101923" stroke="#263746"/>
+<rect x="902.0" y="379" width="30" height="30" rx="9" fill="#a879ff" opacity=".17"/>
+<path d="M911.0 394h12m-6 -6v12" stroke="#a879ff" stroke-width="2.5" stroke-linecap="round"/>
+<text x="943.0" y="392" class="topic">Dynamic Programming</text>
+<text x="943.0" y="411" class="small">6/18 solved</text>
+<rect x="902.0" y="430" width="242.0" height="5" rx="3" fill="#263746"/>
+<rect x="902.0" y="430" width="79.9" height="5" rx="3" fill="#a879ff"/>
+<text x="42" y="490" class="section">▤  Recent Submissions</text>
+<rect x="42" y="508" width="1116" height="250" rx="13" fill="#101923" stroke="#263746"/>
+<rect x="42" y="508" width="1116" height="40" rx="13" fill="#131f2b"/>
+<path d="M42 535h1116" class="line"/>
+<text x="77.9" y="533" class="label">#</text>
+<text x="161.60000000000002" y="533" class="label">TITLE</text>
+<text x="641.48" y="533" class="label">TOPIC</text>
+<text x="831.1999999999999" y="533" class="label">STATUS</text>
+<text x="1020.92" y="533" class="label">DATE</text>
+<text x="77.9" y="576" class="small">1</text>
+<text x="161.60000000000002" y="576" font-size="12" fill="#edf4fb">Search Insert Position</text>
+<text x="641.48" y="576" font-size="12" fill="#38a5ff">Array</text>
+<text x="831.1999999999999" y="576" font-size="12" fill="#37d6a0">✓ Accepted</text>
+<text x="1020.92" y="576" class="small">Oct 11, 2026</text>
+<path d="M42 595h1116" class="line" opacity=".7"/>
+<text x="77.9" y="623" class="small">2</text>
+<text x="161.60000000000002" y="623" font-size="12" fill="#edf4fb">Two Sum</text>
+<text x="641.48" y="623" font-size="12" fill="#38a5ff">Hash Map</text>
+<text x="831.1999999999999" y="623" font-size="12" fill="#37d6a0">✓ Accepted</text>
+<text x="1020.92" y="623" class="small">Oct 10, 2026</text>
+<path d="M42 642h1116" class="line" opacity=".7"/>
+<text x="77.9" y="670" class="small">3</text>
+<text x="161.60000000000002" y="670" font-size="12" fill="#edf4fb">Valid Parentheses</text>
+<text x="641.48" y="670" font-size="12" fill="#38a5ff">Stack</text>
+<text x="831.1999999999999" y="670" font-size="12" fill="#37d6a0">✓ Accepted</text>
+<text x="1020.92" y="670" class="small">Oct 09, 2026</text>
+<path d="M42 689h1116" class="line" opacity=".7"/>
+<text x="77.9" y="717" class="small">4</text>
+<text x="161.60000000000002" y="717" font-size="12" fill="#edf4fb">Binary Search</text>
+<text x="641.48" y="717" font-size="12" fill="#38a5ff">Binary Search</text>
+<text x="831.1999999999999" y="717" font-size="12" fill="#37d6a0">✓ Accepted</text>
+<text x="1020.92" y="717" class="small">Oct 08, 2026</text>
+<path d="M42 805h1116" class="line"/>
+<text x="42" y="832" class="small">LEETCODE JOURNAL  /  TRACK • PRACTICE • IMPROVE</text>
+<text x="1158" y="832" class="small" text-anchor="end">Updated automatically by CodeVault Sync</text>
+</svg>

@@ -1,0 +1,42 @@
+{
+   "action": {
+      "default_icon": "assets/codevault-sync.png",
+      "default_popup": "popup.html",
+      "default_title": "CodeVault Sync — save your solved challenges"
+   },
+   "author": "Sajeed Kannoje",
+   "background": {
+      "service_worker": "scripts/background.js"
+   },
+   "content_scripts": [ {
+      "js": [ "scripts/leetcode.js" ],
+      "matches": [ "https://leetcode.com/*" ],
+      "run_at": "document_idle"
+   }, {
+      "js": [ "scripts/authorize.js" ],
+      "matches": [ "https://github.com/*" ]
+   }, {
+      "js": [ "scripts/gfg.js" ],
+      "matches": [ "https://practice.geeksforgeeks.org/*" ]
+   } ],
+   "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'"
+   },
+   "description": "Securely sync your accepted coding challenges to your own GitHub repository.",
+   "homepage_url": "https://github.com/sajeedkannoje",
+   "icons": {
+      "128": "assets/codevault-sync.png",
+      "16": "assets/codevault-sync.png",
+      "48": "assets/codevault-sync.png"
+   },
+   "manifest_version": 3,
+   "name": "CodeVault Sync",
+   "options_page": "dashboard.html",
+   "permissions": [ "alarms", "unlimitedStorage", "storage", "tabs", "webNavigation" ],
+   "host_permissions": [ "https://github.com/*", "https://api.github.com/*", "https://leetcode.com/*" ],
+   "version": "3.0.0"
+   ,"web_accessible_resources": [ {
+      "resources": [ "assets/question-themes/*.svg", "assets/readme-themes/*.svg" ],
+      "matches": [ "https://leetcode.com/*" ]
+   } ]
+}

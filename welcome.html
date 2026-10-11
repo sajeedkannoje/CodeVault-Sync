@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="css/welcome.css"><title>Welcome to CodeVault Sync</title></head>
+<body><main class="setup-shell">
+  <section class="setup-card">
+    <div class="brand-line"><img src="assets/codevault-sync.png" alt=""><span>CodeVault <b>Sync</b></span><em>Secure setup</em></div>
+    <div class="intro"><span class="eyebrow">WELCOME, <span id="account-name">CODER</span></span><h1>Build your coding vault.</h1><p>Link your own GitHub repository, then every accepted solution is saved there under your account.</p></div>
+    <div class="steps"><span class="active">1 <small>Repository</small></span><i></i><span>2 <small>Preferences</small></span><i></i><span>3 <small>Ready</small></span></div>
+    <section id="repository-step" class="step-panel"><h2>Choose a repository</h2><p>Pick an existing repository or create a new private vault.</p><label>Existing repository<select id="existing-repository"><option value="">Loading repositories…</option></select></label><button id="link-repository" class="secondary">Link selected repository</button><div class="divider"><span>or create one</span></div><label>New repository name<input id="new-repo-name" placeholder="my-coding-vault" maxlength="100"></label><label class="check"><input id="new-repo-private" type="checkbox" checked> Keep it private</label><button id="create-repository">Create repository</button><p id="repository-message" class="message"></p></section>
+    <section id="preferences-step" class="step-panel" hidden><h2>Basic preferences</h2><p>These can always be changed later from the dashboard.</p><div class="two-col"><label>Target branch<input id="branch" value="main" maxlength="255"></label><label>Commit wording<select id="commit-style"><option value="clear">Clear — feat: sync solution</option><option value="classic">Classic — Added solution</option></select></label></div><label class="check"><input id="gfg-toggle" type="checkbox"> Enable GeeksforGeeks sync (experimental)</label><button id="finish-setup">Continue to dashboard →</button></section>
+    <section id="success-step" class="step-panel success" hidden><span class="success-icon">✓</span><h2>Your vault is connected.</h2><p id="success-copy">Your repository is ready for accepted solutions.</p><button id="open-dashboard">Open dashboard →</button></section>
+  </section>
+</main><script src="scripts/welcome.js"></script></body></html>
