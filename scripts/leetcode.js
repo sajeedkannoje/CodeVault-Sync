@@ -1279,6 +1279,12 @@ const recordSyncEvent = async event => {
   await leetcode_api.storage.local.set({ sync_history: history, sync_status: event });
 };
 
+const clearTransientStatsConflicts = async () => {
+  const { sync_history = [] } = await leetcode_api.storage.local.get('sync_history');
+  const history = sync_history.filter(event => !(event.path === statsFilename && event.state === 'failed' && event.message?.includes('(409)')));
+  await leetcode_api.storage.local.set({ sync_history: history });
+};
+
 const upload = async (token, hook, content, problem, filename, sha, message) => {
   const path = getPath(problem, filename);
   const URL = `https://api.github.com/repos/${hook}/contents/${path}`;
@@ -1373,7 +1379,7 @@ const incrementStats = (difficulty, problem) => {
 const setPersistentStats = async localStats => {
   let pStats = { leetcode: localStats };
   const pStatsEncoded = encode(JSON.stringify(pStats));
-  const sha = localStats?.shas?.[readmeFilename]?.[''] || '';
+  const sha = localStats?.shas?.[statsFilename]?.[''] || '';
 
   const { codevault_token: token, codevault_hook: hook } = await leetcode_api.storage.local.get([
     'codevault_token',
@@ -1396,10 +1402,12 @@ const setPersistentStats = async localStats => {
       // Update local stats with the changes from GitHub
       await leetcode_api.storage.local.set({ stats: mergedStats });
 
-      return await delay(
+      const statsSha = await delay(
         () => upload(token, hook, mergedStatsEncoded, statsFilename, '', sha, updateStatsMsg),
         WAIT_FOR_GITHUB_API_TO_NOT_THROW_409_MS
       );
+      await clearTransientStatsConflicts();
+      return statsSha;
     }
     throw e;
   }

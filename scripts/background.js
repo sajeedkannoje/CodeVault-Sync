@@ -238,25 +238,28 @@ function handleMessage(request, sender, sendResponse) {
       api.tabs.remove(tab.id);
     });
   } 
-  else if (request.type === 'LEETCODE_SUBMISSION')
-  {
-    // Each request gets its own listener, so removing it never removes another request's listener
+  else if (request?.type === 'LEETCODE_SUBMISSION') {
+    const currentMatch = sender?.tab?.url?.match(/\/submissions\/(\d+)/);
+    if (currentMatch) {
+      sendResponse({ submissionId: currentMatch[1] });
+      return false;
+    }
+    let replied = false;
+    const reply = payload => {
+      if (replied) return;
+      replied = true;
+      api.webNavigation.onHistoryStateUpdated.removeListener(onSubmissionUrl);
+      sendResponse(payload);
+    };
     const onSubmissionUrl = details => {
       const match = details.url.match(/\/submissions\/(\d+)/);
-      if (!match) {
-        // e.g. the submissions list page (/submissions/) without an id; keep waiting
-        return;
-      }
-      const submissionId = match[1];
-      sendResponse({ submissionId });
-      api.webNavigation.onHistoryStateUpdated.removeListener(onSubmissionUrl);
+      if (match) reply({ submissionId: match[1] });
     };
-    api.webNavigation.onHistoryStateUpdated.addListener(onSubmissionUrl, {
-      // Conditions within one filter are ANDed; separate filters in the array are ORed
-      url: [{ hostSuffix: 'leetcode.com', pathContains: 'submissions' }],
-    });
+    api.webNavigation.onHistoryStateUpdated.addListener(onSubmissionUrl, { url: [{ hostSuffix: 'leetcode.com', pathContains: 'submissions' }] });
+    setTimeout(() => reply({ submissionId: null }), 15000);
+    return true;
   }
-  return true;
+  return false;
 }
 
 function isChrome() {
