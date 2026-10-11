@@ -76,12 +76,23 @@ $('import-history').onclick = async () => {
     if (!ids.length) { $('import-help').textContent = 'Select at least one submission to import.'; return; }
     $('import-selected').disabled = true; $('import-all').disabled = true;
     await chrome.storage.local.set({ history_import_progress: { completed: 0, total: ids.length, failed: 0, state: 'running' } });
-    $('import-help').textContent = `Importing ${ids.length} solutions automatically in groups of 15. Keep this dashboard open.`;
+    $('import-help').textContent = `Importing ${ids.length} solutions one at a time. Progress is saved, and temporary GitHub failures are retried automatically.`;
     const allResults = [];
-    for (let offset = 0; offset < ids.length; offset += 15) {
-      const imported = await chrome.runtime.sendMessage({ type: 'IMPORT_LEETCODE_HISTORY', submissionIds: ids.slice(offset, offset + 15), progressOffset: offset, total: ids.length });
-      if (!imported?.ok) { $('import-help').textContent = imported?.error || 'Import stopped before completion.'; break; }
-      allResults.push(...imported.results);
+    for (let offset = 0; offset < ids.length; offset++) {
+      let imported;
+      let lastError = '';
+      for (let attempt = 0; attempt < 3; attempt++) {
+        imported = await chrome.runtime.sendMessage({ type: 'IMPORT_LEETCODE_HISTORY', submissionIds: [ids[offset]], progressOffset: offset, total: ids.length }).catch(error => ({ ok: false, error: error.message }));
+        if (imported?.ok) break;
+        lastError = imported?.error || 'Temporary import failure.';
+        $('import-help').textContent = `Retrying ${offset + 1} of ${ids.length}… (${attempt + 1}/3)`;
+        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+      }
+      if (imported?.ok) allResults.push(...(imported.results || []));
+      else allResults.push({ ok: false, id: ids[offset], error: lastError || 'Import failed after retries.' });
+      const failedSoFar = allResults.filter(item => !item.ok).length;
+      await chrome.storage.local.set({ history_import_progress: { completed: offset + 1, total: ids.length, failed: failedSoFar, state: 'running' } });
+      $('import-help').textContent = `Importing ${offset + 1} of ${ids.length}${failedSoFar ? ` · ${failedSoFar} need attention` : ''}`;
     }
     const failed = allResults.filter(item => !item.ok).length;
     await chrome.storage.local.set({ history_import_progress: { completed: allResults.length, total: ids.length, failed, state: 'done' } });

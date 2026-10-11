@@ -19,7 +19,16 @@ async function createRepository(name, isPrivate) {
   if (!/^[A-Za-z0-9_.-]{1,100}$/.test(name)) throw new Error('Use letters, numbers, dots, dashes, or underscores for the repository name.');
   const repository = await github('/user/repos', { method: 'POST', body: JSON.stringify({ name, private: Boolean(isPrivate), auto_init: true, description: 'Personal coding vault — accepted solutions synced with CodeVault Sync by Sajeed Kannoje.' }) });
   await chrome.storage.local.set({ mode_type: 'commit', codevault_hook: repository.full_name, repo: repository.html_url, default_branch: repository.default_branch || 'main' });
-  return repository;
+  // The setup wizard creates repositories directly, so explicitly publish the
+  // CodeVault homepage once GitHub has created the initial branch.
+  let lastError;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const result = await chrome.runtime.sendMessage({ type: 'APPLY_REPO_THEME' }).catch(error => ({ ok: false, error: error.message }));
+    if (result?.ok) return repository;
+    lastError = result?.error || 'GitHub could not create the default README.';
+    await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+  }
+  throw new Error(`Repository was created, but the default README could not be published: ${lastError}`);
 }
 
 function showStep(name) {
