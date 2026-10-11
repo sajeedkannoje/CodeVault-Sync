@@ -1945,6 +1945,22 @@ leetcode_api.runtime.onMessage.addListener((request, _sender, sendResponse) => {
       hasNext = Boolean(page.has_next || page.hasNext);
       if (!rows.length) break;
     }
+    // LeetCode's submission-history endpoint may return a capped or partial
+    // timeline. Merge it with the signed-in account's complete solved list so
+    // the importer offers every unique accepted problem, not just the first page.
+    try {
+      const solvedFallback = await scanSolvedProblemFallback(csrfToken);
+      for (const item of solvedFallback) {
+        const key = item.titleSlug || item.id;
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        submissions.push(item);
+      }
+    } catch (_error) {
+      // Keep the submissions already read when LeetCode temporarily declines
+      // the supplemental solved-list request.
+    }
+    submissions.sort((left, right) => Number(right.timestamp || 0) - Number(left.timestamp || 0));
     sendResponse({ ok: true, username, submissions });
   })().catch(error => sendResponse({ ok: false, error: error.message }));
   return true;
