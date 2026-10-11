@@ -68,8 +68,8 @@ $('import-history').onclick = async () => {
   const results = $('import-results');
   const escape = value => String(value || '').replace(/[&<>\"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' })[char]);
   results.hidden = false;
-  results.innerHTML = `<div class="import-summary"><strong>${submissions.length} accepted submissions found for ${escape(result.username)}</strong><div><button id="import-selected">Import selected</button> <button id="import-all" class="apply-theme">Import all ${submissions.length}</button></div></div><p class="import-note">Imports run automatically in groups of 15. Existing solution folders are skipped and every README records its original solve date.</p><div id="import-progress" class="import-progress" hidden></div><div class="import-list">${submissions.map(item => `<label><input type="checkbox" value="${escape(item.id)}"><span><b>${escape(item.title)}</b><small>${escape(item.lang || 'Unknown language')} · ${new Date(Number(item.timestamp) * 1000).toLocaleDateString()}</small></span></label>`).join('')}</div>`;
-  $('import-help').textContent = 'Import all runs automatically in safe groups of 15. Each historical commit uses its original LeetCode solve date.';
+  results.innerHTML = `<div class="import-summary"><strong>${submissions.length} accepted submissions found for ${escape(result.username)}</strong><div><button id="import-selected">Import selected</button> <button id="import-all" class="apply-theme">Import all ${submissions.length}</button></div></div><p class="import-note">Imports run one solution at a time. Existing solution folders are skipped and every README records its original solve date.</p><div id="import-progress" class="import-progress" hidden></div><div class="import-list">${submissions.map(item => `<label><input type="checkbox" value="${escape(item.id)}"><span><b>${escape(item.title)}</b><small>${escape(item.lang || 'Unknown language')} · ${new Date(Number(item.timestamp) * 1000).toLocaleDateString()}</small></span></label>`).join('')}</div>`;
+  $('import-help').textContent = 'Import all continues through every submission and retries temporary GitHub or LeetCode errors automatically.';
   const runImport = async ids => {
     const timestamps = new Map(submissions.map(item => [Number(item.id), Number(item.timestamp) || 0]));
     ids = [...new Set(ids)].sort((left, right) => (timestamps.get(left) || 0) - (timestamps.get(right) || 0));
@@ -103,6 +103,9 @@ $('import-history').onclick = async () => {
   $('import-selected').onclick = () => runImport([...results.querySelectorAll('input:checked')].map(input => Number(input.value)).filter(Number.isFinite));
   $('import-all').onclick = () => runImport(submissions.map(item => Number(item.id)).filter(Number.isFinite));
 };
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.history_import_progress) renderImportProgress(changes.history_import_progress.newValue);
+});
 document.querySelector('.hint').textContent = 'This applies your selected CodeVault Sync theme, keeps the topic index, and uploads the live SVG dashboard immediately.';
 $('apply-repo-theme').onclick = async () => { const button = $('apply-repo-theme'); button.disabled = true; button.textContent = 'Applying theme…'; const result = await chrome.runtime.sendMessage({ type: 'APPLY_REPO_THEME' }); $('saved-state').textContent = result?.ok ? '● Theme applied to GitHub' : `● ${result?.error || 'Theme update failed'}`; button.disabled = false; button.textContent = 'Apply theme to linked repository now'; };
 function setupBasicSettings() {

@@ -539,15 +539,20 @@ LeetCodeV2.prototype.init = async function () {
   };
   const submissionDetailsOptions = {
     method: 'POST',
+    credentials: 'include',
     headers: {
-      cookie: document.cookie, // required to authorize the API request
       'content-type': 'application/json',
+      'x-requested-with': 'XMLHttpRequest',
     },
     body: JSON.stringify(submissionDetailsQuery),
   };
-  const submissionData = await fetch('https://leetcode.com/graphql/', submissionDetailsOptions)
-    .then(res => res.json())
-    .then(res => res.data.submissionDetails)
+  const submissionResponse = await fetch('https://leetcode.com/graphql/', submissionDetailsOptions);
+  const submissionPayload = await submissionResponse.json().catch(() => ({}));
+  const submissionData = submissionPayload?.data?.submissionDetails;
+  if (!submissionResponse.ok || !submissionData?.question?.titleSlug) {
+    const reason = submissionPayload?.errors?.[0]?.message || 'LeetCode did not return this submission.';
+    throw new CodeVaultError(`Submission ${submissionId} could not be read: ${reason}`);
+  }
     
   // Query for getting question details mainly frontendId
   // TODO: maybe handle a case where submissionData.question does not exist (e.g. LeetCode changes structure of response object)
@@ -558,17 +563,18 @@ LeetCodeV2.prototype.init = async function () {
   };
   const questionDetailsOptions = {
     method: 'POST',
+    credentials: 'include',
     headers: {
-      cookie: document.cookie, // required to authorize the API request
       'content-type': 'application/json',
+      'x-requested-with': 'XMLHttpRequest',
     },
     body: JSON.stringify(questionDetailsQuery),
   };
-  const frontendId = await fetch('https://leetcode.com/graphql/', questionDetailsOptions)
-    .then(res => res.json())
-    .then(res => res.data.question.questionFrontendId)
-    
-  submissionData.question.questionFrontendId = frontendId;
+  const questionResponse = await fetch('https://leetcode.com/graphql/', questionDetailsOptions);
+  const questionPayload = await questionResponse.json().catch(() => ({}));
+  // The frontend ID is only used for the folder number. Keep importing with the
+  // question ID when LeetCode temporarily declines this supplementary lookup.
+  submissionData.question.questionFrontendId = questionPayload?.data?.question?.questionFrontendId || submissionData.question.questionId;
 
   this.submissionData = submissionData;
 };
