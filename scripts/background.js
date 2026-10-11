@@ -178,18 +178,23 @@ async function linkCodeVaultRepository(fullName) {
 function handleMessage(request, sender, sendResponse) {
   if (request?.type === 'START_GITHUB_DEVICE_AUTH') {
     startGitHubDeviceAuth().then(device => sendResponse({ ok: true, device })).catch(error => sendResponse({ ok: false, error: error.message }));
+    return true;
   }
   else if (request?.type === 'APPLY_REPO_THEME') {
     applyRepoTheme().then(() => sendResponse({ ok: true })).catch(error => sendResponse({ ok: false, error: error.message }));
+    return true;
   }
   else if (request?.type === 'CREATE_CODEVAULT_REPOSITORY') {
     createCodeVaultRepository(request.name, request.private).then(repository => sendResponse({ ok: true, repository })).catch(error => sendResponse({ ok: false, error: error.message }));
+    return true;
   }
   else if (request?.type === 'LIST_CODEVAULT_REPOSITORIES') {
     listCodeVaultRepositories().then(repositories => sendResponse({ ok: true, repositories })).catch(error => sendResponse({ ok: false, error: error.message }));
+    return true;
   }
   else if (request?.type === 'LINK_CODEVAULT_REPOSITORY') {
     linkCodeVaultRepository(request.fullName).then(repository => sendResponse({ ok: true, repository })).catch(error => sendResponse({ ok: false, error: error.message }));
+    return true;
   }
   else if (request?.type === 'SCAN_LEETCODE_HISTORY') {
     api.tabs.query({ url: 'https://leetcode.com/*' }, tabs => {
@@ -199,6 +204,7 @@ function handleMessage(request, sender, sendResponse) {
         sendResponse(response || { ok: false, error: 'LeetCode did not return submission history.' });
       });
     });
+    return true;
   }
   else if (request?.type === 'IMPORT_LEETCODE_HISTORY') {
     api.tabs.query({ url: 'https://leetcode.com/*' }, tabs => {
@@ -208,6 +214,7 @@ function handleMessage(request, sender, sendResponse) {
         sendResponse(response || { ok: false, error: 'LeetCode did not return an import result.' });
       });
     });
+    return true;
   }
   else if (request?.type === 'HISTORY_IMPORT_PROGRESS') {
     api.storage.local.set({ history_import_progress: { ...request.progress, state: 'running' } });
