@@ -68,27 +68,29 @@ $('import-history').onclick = async () => {
   const results = $('import-results');
   const escape = value => String(value || '').replace(/[&<>\"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' })[char]);
   results.hidden = false;
-  results.innerHTML = `<div class="import-summary"><strong>${submissions.length} accepted submissions found for ${escape(result.username)}</strong><div><button id="import-selected">Import selected</button> <button id="import-all" class="apply-theme">Import all ${submissions.length}</button></div></div><p class="import-note">Imports run one solution at a time. Existing solution folders are skipped and every README records its original solve date.</p><div id="import-progress" class="import-progress" hidden></div><div class="import-list">${submissions.map(item => `<label><input type="checkbox" value="${escape(item.id)}"><span><b>${escape(item.title)}</b><small>${escape(item.lang || 'Unknown language')} · ${new Date(Number(item.timestamp) * 1000).toLocaleDateString()}</small></span></label>`).join('')}</div>`;
-  $('import-help').textContent = 'Import all continues through every submission and retries temporary GitHub or LeetCode errors automatically.';
-  const runImport = async ids => {
+  results.innerHTML = `<div class="import-summary"><strong>${submissions.length} accepted submissions found for ${escape(result.username)}</strong><div><button id="import-selected">Import selected</button> <button id="import-all" class="apply-theme">Import all ${submissions.length}</button></div></div><label class="import-mode">Commit dates<select id="import-date-mode"><option value="historical">Original solve dates — reliable, about ${Math.max(1, Math.ceil(submissions.length * 0.2))}–${Math.max(2, Math.ceil(submissions.length * 0.3))} minutes</option><option value="today">Today’s date — faster, about ${Math.max(1, Math.ceil(submissions.length * 0.05))}–${Math.max(2, Math.ceil(submissions.length * 0.08))} minutes</option></select></label><p class="import-note">Original dates need a separate dated Git commit per solution. Today’s-date mode uses the same folders and READMEs, but does not recreate your historical Git timeline.</p><div id="import-progress" class="import-progress" hidden></div><div class="import-list">${submissions.map(item => `<label><input type="checkbox" value="${escape(item.id)}"><span><b>${escape(item.title)}</b><small>${escape(item.lang || 'Unknown language')} · ${new Date(Number(item.timestamp) * 1000).toLocaleDateString()}</small></span></label>`).join('')}</div>`;
+  $('import-help').textContent = 'Choose original dates for a historical Git timeline, or today’s date for a faster repository import.';
+  const runImport = async (ids, dateMode = 'historical') => {
     const timestamps = new Map(submissions.map(item => [Number(item.id), Number(item.timestamp) || 0]));
     ids = [...new Set(ids)].sort((left, right) => (timestamps.get(left) || 0) - (timestamps.get(right) || 0));
     if (!ids.length) { $('import-help').textContent = 'Select at least one submission to import.'; return; }
     $('import-selected').disabled = true; $('import-all').disabled = true;
     await chrome.storage.local.set({ history_import_progress: { completed: 0, total: ids.length, failed: 0, state: 'running' } });
-    $('import-help').textContent = `Importing ${ids.length} solutions at a safe pace. Progress is saved, and temporary GitHub or LeetCode limits are retried automatically.`;
+    const preserveDates = dateMode === 'historical';
+    $('import-help').textContent = preserveDates ? `Importing ${ids.length} solutions with their original dates. This takes longer because GitHub receives one dated commit per solution.` : `Importing ${ids.length} solutions with today’s date at a faster pace.`;
     const allResults = [];
     for (let offset = 0; offset < ids.length; offset++) {
       let imported;
       let lastError = '';
-      for (let attempt = 0; attempt < 4; attempt++) {
-        imported = await chrome.runtime.sendMessage({ type: 'IMPORT_LEETCODE_HISTORY', submissionIds: [ids[offset]], progressOffset: offset, total: ids.length }).catch(error => ({ ok: false, error: error.message }));
+      const maxAttempts = preserveDates ? 4 : 2;
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        imported = await chrome.runtime.sendMessage({ type: 'IMPORT_LEETCODE_HISTORY', submissionIds: [ids[offset]], progressOffset: offset, total: ids.length, dateMode }).catch(error => ({ ok: false, error: error.message }));
         if (imported?.ok) break;
         lastError = imported?.error || 'Temporary import failure.';
-        $('import-help').textContent = `Retrying ${offset + 1} of ${ids.length}… (${attempt + 1}/4)`;
+        $('import-help').textContent = `Retrying ${offset + 1} of ${ids.length}… (${attempt + 1}/${maxAttempts})`;
         // Historical imports create blobs, a tree, a commit, and a ref update.
         // Give GitHub enough time to clear secondary write-rate limits.
-        await new Promise(resolve => setTimeout(resolve, 10000 * (attempt + 1)));
+        await new Promise(resolve => setTimeout(resolve, (preserveDates ? 10000 : 2500) * (attempt + 1)));
       }
       if (imported?.ok) allResults.push(...(imported.results || []));
       else allResults.push({ ok: false, id: ids[offset], error: lastError || 'Import failed after retries.' });
@@ -97,7 +99,7 @@ $('import-history').onclick = async () => {
       $('import-help').textContent = `Importing ${offset + 1} of ${ids.length}${failedSoFar ? ` · ${failedSoFar} need attention` : ''}`;
       // Backdated commits are intentionally paced: each one has several GitHub
       // write requests and needs room before the next dated commit starts.
-      await new Promise(resolve => setTimeout(resolve, 8000));
+      await new Promise(resolve => setTimeout(resolve, preserveDates ? 8000 : 1500));
     }
     const failed = allResults.filter(item => !item.ok).length;
     await chrome.storage.local.set({ history_import_progress: { completed: allResults.length, total: ids.length, failed, state: 'done' } });
@@ -105,8 +107,8 @@ $('import-history').onclick = async () => {
     $('import-help').textContent = failed ? `${allResults.length - failed} imported; ${failed} need attention. Retry only those if needed.` : `${allResults.length} solutions imported successfully.`;
     render();
   };
-  $('import-selected').onclick = () => runImport([...results.querySelectorAll('input:checked')].map(input => Number(input.value)).filter(Number.isFinite));
-  $('import-all').onclick = () => runImport(submissions.map(item => Number(item.id)).filter(Number.isFinite));
+  $('import-selected').onclick = () => runImport([...results.querySelectorAll('input:checked')].map(input => Number(input.value)).filter(Number.isFinite), $('import-date-mode').value);
+  $('import-all').onclick = () => runImport(submissions.map(item => Number(item.id)).filter(Number.isFinite), $('import-date-mode').value);
 };
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.history_import_progress) renderImportProgress(changes.history_import_progress.newValue);

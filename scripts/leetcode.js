@@ -2008,7 +2008,7 @@ async function historicalGitHubUser(token) {
   return user;
 }
 
-async function importHistoricalSubmission(submissionId) {
+async function importHistoricalSubmission(submissionId, preserveOriginalDate = true) {
   const leetCode = new LeetCodeV2();
   leetCode.submissionId = Number(submissionId);
   await leetCode.init();
@@ -2020,7 +2020,7 @@ async function importHistoricalSubmission(submissionId) {
   const filename = problemName + language;
   const code = leetCode.findCode();
   const submittedAt = submission?.timestamp ? new Date(Number(submission.timestamp) * 1000).toLocaleString() : 'Unknown';
-  const submittedIso = submission?.timestamp ? new Date(Number(submission.timestamp) * 1000).toISOString() : new Date().toISOString();
+  const submittedIso = preserveOriginalDate && submission?.timestamp ? new Date(Number(submission.timestamp) * 1000).toISOString() : new Date().toISOString();
   const problemStatement = `<h2><a href="https://leetcode.com/problems/${submission.question.titleSlug}/">${submission.question.questionId}. ${submission.question.title}</a></h2><h3>${leetCode.parseDifficulty()}</h3><hr>${leetCode.parseQuestionDescription()}`;
   const { codevault_token: token, codevault_hook: hook, default_branch = 'main', question_readme_theme = 'classic', stats: savedStats } = await leetcode_api.storage.local.get(['codevault_token','codevault_hook','default_branch','question_readme_theme','stats']);
   if (!token || !hook) throw new Error('Connect GitHub and choose a repository first.');
@@ -2071,7 +2071,7 @@ leetcode_api.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     const results = [];
     for (let index = 0; index < ids.length; index++) {
       const id = ids[index];
-      try { results.push({ ok: true, ...(await importHistoricalSubmission(id)) }); }
+      try { results.push({ ok: true, ...(await importHistoricalSubmission(id, request.dateMode !== 'today')) }); }
       catch (error) { results.push({ ok: false, id, error: error.message || 'Import failed' }); }
       await leetcode_api.runtime.sendMessage({ type: 'HISTORY_IMPORT_PROGRESS', progress: { completed: (Number(request.progressOffset) || 0) + index + 1, total: Number(request.total) || ids.length, failed: results.filter(item => !item.ok).length } });
     }
