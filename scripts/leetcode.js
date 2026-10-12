@@ -625,9 +625,10 @@ LeetCodeV2.prototype.getProblemNameSlug = function () {
 };
 LeetCodeV2.prototype.getSuccessStateAndUpdate = function () {
   const successTag = document.querySelectorAll('[data-e2e-locator="submission-result"]');
-  if (checkElem(successTag)) {
-    console.log('[CodeVault Sync]', successTag[0]);
-    successTag[0].classList.add('marked_as_success');
+  const acceptedTag = [...successTag].find(element => /accepted/i.test(element.innerText || ''));
+  if (acceptedTag) {
+    console.log('[CodeVault Sync]', acceptedTag);
+    acceptedTag.classList.add('marked_as_success');
     return true;
   }
   return false;
@@ -1654,9 +1655,8 @@ function loader(leetCode) {
       const isSuccessfulSubmission = leetCode.getSuccessStateAndUpdate();
       if (!isSuccessfulSubmission) {
         iterations++;
-        if (iterations > 9) {
-          // poll for max 10 attempts (10 seconds)
-          throw new util_CodeVaultError('Could not find successful submission after 10 seconds.');
+        if (iterations > 59) {
+          throw new util_CodeVaultError('Could not confirm an accepted submission after 60 seconds.');
         }
         return;
       }
@@ -1748,10 +1748,9 @@ function loader(leetCode) {
       leetCode.markUploadFailed();
       clearInterval(intervalId);
 
-      if (!(err instanceof util_CodeVaultError)) {
-        console.error('[CodeVault Sync]', err);
-        return;
-      }
+      const message = err?.message || 'Unexpected sync failure.';
+      await recordSyncEvent({ state: 'failed', message: `Sync failed: ${message}`, path: 'LeetCode submission', at: Date.now() });
+      console.error('[CodeVault Sync]', err);
     }
   }, 1000);
 }
@@ -1803,6 +1802,7 @@ async function v2SubmissionHandler(event, leetCode) {
 
   // is click or is ctrl enter
   const submissionId = await leetcode_listenForSubmissionId();
+  if (!submissionId) return false;
   leetCode.submissionId = submissionId;
   loader(leetCode);
   return true;

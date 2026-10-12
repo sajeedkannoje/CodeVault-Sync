@@ -34,7 +34,7 @@
    "options_page": "dashboard.html",
    "permissions": [ "alarms", "unlimitedStorage", "storage", "tabs", "webNavigation" ],
    "host_permissions": [ "https://github.com/*", "https://api.github.com/*", "https://leetcode.com/*" ],
-   "version": "3.0.5"
+   "version": "3.0.6"
    ,"web_accessible_resources": [ {
       "resources": [ "assets/question-themes/*.svg", "assets/readme-themes/*.svg" ],
       "matches": [ "https://leetcode.com/*" ]

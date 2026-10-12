@@ -247,9 +247,10 @@ function handleMessage(request, sender, sendResponse) {
     });
   } 
   else if (request?.type === 'LEETCODE_SUBMISSION') {
-    const currentMatch = sender?.tab?.url?.match(/\/submissions\/(\d+)/);
+    const submissionFromUrl = url => String(url || '').match(/\/(?:submissions|submission)(?:\/detail)?\/(\d+)/)?.[1] || null;
+    const currentMatch = submissionFromUrl(sender?.tab?.url);
     if (currentMatch) {
-      sendResponse({ submissionId: currentMatch[1] });
+      sendResponse({ submissionId: currentMatch });
       return false;
     }
     let replied = false;
@@ -257,14 +258,20 @@ function handleMessage(request, sender, sendResponse) {
       if (replied) return;
       replied = true;
       api.webNavigation.onHistoryStateUpdated.removeListener(onSubmissionUrl);
+      api.webNavigation.onCommitted.removeListener(onSubmissionUrl);
+      api.tabs.onUpdated.removeListener(onTabUrlUpdated);
       sendResponse(payload);
     };
     const onSubmissionUrl = details => {
-      const match = details.url.match(/\/submissions\/(\d+)/);
-      if (match) reply({ submissionId: match[1] });
+      if (sender?.tab?.id != null && details.tabId !== sender.tab.id) return;
+      const submissionId = submissionFromUrl(details.url);
+      if (submissionId) reply({ submissionId });
     };
+    const onTabUrlUpdated = (tabId, changeInfo) => onSubmissionUrl({ tabId, url: changeInfo.url });
     api.webNavigation.onHistoryStateUpdated.addListener(onSubmissionUrl, { url: [{ hostSuffix: 'leetcode.com', pathContains: 'submissions' }] });
-    setTimeout(() => reply({ submissionId: null }), 15000);
+    api.webNavigation.onCommitted.addListener(onSubmissionUrl, { url: [{ hostSuffix: 'leetcode.com', pathContains: 'submissions' }] });
+    api.tabs.onUpdated.addListener(onTabUrlUpdated);
+    setTimeout(() => reply({ submissionId: null }), 90000);
     return true;
   }
   return false;
